@@ -1,0 +1,171 @@
+<html>
+	<head><title>Points articulations</title></head>
+	<body>
+	
+		<button id="go">
+			Goi
+		</button>
+		
+		<script>
+            var pnts = "";
+            
+			function NumberOfArticulationPoints(numberOfNodes) {
+                this.stack = [];
+                this.numberOfNodes = numberOfNodes;
+                this.articulationPoints = [];
+                this.parent = [];
+                this.visited = [];
+                this.adjacencyMatrix = [];
+                
+                for(var i=1; i<= numberOfNodes; i++){
+                    this.visited[i] = 0;
+                }
+            }
+            
+            NumberOfArticulationPoints.prototype.numberOfArticulationPoint = function(adjacencyMatrix, source) {
+                var children = 0;
+                var element, destination;
+                this.stack.push(source);
+                this.visited[source] = 1;
+
+                for (var sourceVertex = 1; sourceVertex <= this.numberOfNodes; sourceVertex++)
+                {
+                    this.adjacencyMatrix[sourceVertex] = [];
+                    for (var destinationVertex = 1; destinationVertex <= this.numberOfNodes; destinationVertex++)
+                    {
+                        this.adjacencyMatrix[sourceVertex][destinationVertex] = adjacencyMatrix[sourceVertex][destinationVertex];
+                    }
+                }
+
+                while (this.stack.length > 0)
+                {
+                    element = this.stack[this.stack.length - 1];
+                    destination = element;
+                    while (destination <= this.numberOfNodes)
+                    {
+                        if (this.adjacencyMatrix[element][destination] == 1 && this.visited[destination] == 0)
+                        {
+                            this.stack.push(destination);
+                            this.visited[destination] = 1;
+                            this.parent[destination] = element;
+                            if (element == source)
+                            {
+                                children++;
+                            }
+                            if (!this.isLeaf(this.adjacencyMatrix, destination))                     /**************************/
+                            {
+                                if (children > 1)
+                                {
+                                    this.articulationPoints.push(source);
+                                }
+                                if (this.isArticulationPoint(this.adjacencyMatrix, destination))
+                                {
+                                    this.articulationPoints.push(destination);
+                                    pnts += destination + " |\n";
+                                }
+                            }
+                            element = destination;
+                            destination = 1;
+                            continue;
+                        }
+                        destination++;
+                    }
+                    this.stack.pop();
+                }
+                return this.articulationPoints.length;
+            }
+
+            NumberOfArticulationPoints.prototype.isArticulationPoint = function(adjacencyMatrix, root) {
+                alert("e="+element+"   "+"r="+root+"......................");
+                var explored = [];
+                var _stack = [];
+                _stack.push(root);
+                var element = 0, destination = 0;
+                for(var i=0 ; i< this.numberOfNodes ; i++)
+                    explored[i] = 0;
+                while (_stack.length > 0)
+                {
+                    alert("stack="+_stack+"     e="+element+"   "+"r="+root+"    ....");
+                    element = _stack[_stack.length - 1];
+                    destination = 1;
+                    while (destination <= this.numberOfNodes)
+                    { alert("stack="+_stack+"     e="+element+"   "+"r="+root+"     dest="+destination);
+                        if ( element != root)
+                        { //alert(this.visited+"   "+destination);alert("Avant 000false");
+                            if (adjacencyMatrix[element][destination] == 1 && this.visited[destination] == 1)
+                            {
+                                if (this.stack.indexOf(destination) != -1)
+                                {
+                                    alert("Avant 000false"+"  dest="+destination+"    parent["+root+"]= "+this.parent[root]);
+                                    if (destination <= this.parent[root])
+                                    {
+                                        alert("Avant false");
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                            } 
+                        }
+                        if ((adjacencyMatrix[element][destination] == 1 && explored[destination] == 0 )
+                                    && this.visited[destination] == 0)
+                        {
+                            _stack.push(destination);
+                            explored[destination] = 1;
+                            adjacencyMatrix[destination][element] = 0;
+                            element = destination;
+                            destination = 1;
+                            alert("Just before continue");
+                            continue;
+                        }
+                        destination++;//alert("Not reachable code 1");
+                    }
+                    _stack.pop();//alert("Not reachable code 2");
+                }
+                return true;
+            }
+
+            NumberOfArticulationPoints.prototype.isLeaf = function(adjacencyMatrix, node) {
+                var isLeaf = true;
+                for (var vertex = 1; vertex <= this.numberOfNodes; vertex++)
+                {
+                    if (adjacencyMatrix[node][vertex] == 1 && this.visited[vertex] == 1)
+                    {
+                         isLeaf = true;
+                    }else if (adjacencyMatrix[node][vertex] == 1 && this.visited[vertex] == 0)
+                    {
+                         isLeaf = false;
+                         break;
+                    }
+                }
+                return isLeaf;
+            }
+            
+		function go(number_of_nodes){
+			var number_of_nodes, __source;
+			number_of_nodes = 7; // NOMBRE DE NOEUDS
+
+			var adjacency_matrix = [
+										[0,0,0,0,0,0,0,0],
+										[0,0,1,1,0,0,0,0],
+										[0,1,0,1,0,0,0,0],
+										[0,1,1,0,1,1,0,0],
+										[0,0,0,1,0,1,0,0],
+										[0,0,0,1,1,0,1,0],
+										[0,0,0,0,0,1,0,1],
+										[0,0,0,0,0,0,1,0]
+                                    ];
+			__source = 1;
+
+			var articulationPoints = new NumberOfArticulationPoints(number_of_nodes);		  
+			var num = articulationPoints.numberOfArticulationPoint(adjacency_matrix, __source);
+            
+            alert("Nombre de points d'articulation " + num + "\n" + pnts);
+		}
+        
+        var button = document.getElementById("go");
+        button.addEventListener('click', function(e){
+            go(7);
+        });
+		</script>
+	</body>
+</html>

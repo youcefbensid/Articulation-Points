@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Détection des points d'articulation</title>
+        <!-- START Style Sheets include-->
+        <link href="css/bootstrap/bootstrap.css" type="text/css" rel="stylesheet"/>
+        <link href="css/style.css" type="text/css" rel="stylesheet"/>
+        <!-- END Style Sheets include-->
+        <!-- START SIGMA IMPORTS -->
+        <script src="src/sigma.core.js"></script>
+        <script src="src/conrad.js"></script>
+        <script src="src/utils/sigma.utils.js"></script>
+        <script src="src/utils/sigma.polyfills.js"></script>
+        <script src="src/sigma.settings.js"></script>
+        <script src="src/classes/sigma.classes.dispatcher.js"></script>
+        <script src="src/classes/sigma.classes.configurable.js"></script>
+        <script src="src/classes/sigma.classes.graph.js"></script>
+        <script src="src/classes/sigma.classes.camera.js"></script>
+        <script src="src/classes/sigma.classes.quad.js"></script>
+        <script src="src/captors/sigma.captors.mouse.js"></script>
+        <script src="src/captors/sigma.captors.touch.js"></script>
+        <script src="src/renderers/sigma.renderers.canvas.js"></script>
+        <script src="src/renderers/sigma.renderers.webgl.js"></script>
+        <script src="src/renderers/sigma.renderers.def.js"></script>
+        <script src="src/renderers/webgl/sigma.webgl.nodes.def.js"></script>
+        <script src="src/renderers/webgl/sigma.webgl.nodes.fast.js"></script>
+        <script src="src/renderers/webgl/sigma.webgl.edges.def.js"></script>
+        <script src="src/renderers/webgl/sigma.webgl.edges.fast.js"></script>
+        <script src="src/renderers/webgl/sigma.webgl.edges.arrow.js"></script>
+        <script src="src/renderers/canvas/sigma.canvas.labels.def.js"></script>
+        <script src="src/renderers/canvas/sigma.canvas.hovers.def.js"></script>
+        <script src="src/renderers/canvas/sigma.canvas.nodes.def.js"></script>
+        <script src="src/renderers/canvas/sigma.canvas.edges.def.js"></script>
+        <script src="src/renderers/canvas/sigma.canvas.edges.curve.js"></script>
+        <script src="src/renderers/canvas/sigma.canvas.edges.arrow.js"></script>
+        <script src="src/renderers/canvas/sigma.canvas.edges.curvedArrow.js"></script>
+        <script src="src/middlewares/sigma.middlewares.rescale.js"></script>
+        <script src="src/middlewares/sigma.middlewares.copy.js"></script>
+        <script src="src/misc/sigma.misc.animation.js"></script>
+        <script src="src/misc/sigma.misc.bindEvents.js"></script>
+        <script src="src/misc/sigma.misc.drawHovers.js"></script>
+        <!-- END SIGMA IMPORTS -->
+        <!-- START Page Scripts-->
+        <script src="plugins/sigma.plugins.dragNodes/sigma.plugins.dragNodes.js"></script>
+        <script src="js/jquery-2.1.4.min.js"></script>
+        <script src="js/script.js"></script>
+        <!-- END Page Scripts-->
+    </head>
+    <body>
+        <row><h1 style="margin-top: 0px; margin-left: 450px; text-decoration: underline solid;">Graphes non orientés</h1> </row>
+
+        <row>
+            <div class="data-container col-md-5">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                    <h3 class="panel-title">Matrice du graphe</h3>
+                    </div>
+                    <div class="panel-body">
+                        Introduire la matrice représentative du graphe.
+                        <div class="box-line">
+                            Choisir le nombre de sommets: 
+                            <input id="node-number-input" min="1" type="number" placeholder="5" class="number-input"/>
+                            <button onclick="updateGraphMatrix()" class="btn btn-primary" style="background-color: green;">Valider</button>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr id="table-header">
+                                <th></th>
+                                <th>1</th>
+                                <th>2</th>
+                                <th>3</th>
+                                <th>4</th>
+                                <th>5</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <tr>
+                                <th>1</th>
+                                <td>
+                                    <input id="11" type="checkbox" onclick="updateCell()" class="form-control" disabled/>
+                                </td>
+                                <td>
+                                    <input id="12" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="13" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="14" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="15" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>2</th>
+                                <td>
+                                    <input id="21" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="22" type="checkbox" onclick="updateCell()" class="form-control" disabled/>
+                                </td>
+                                <td>
+                                    <input id="23" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="24" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="25" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>3</th>
+                                <td>
+                                    <input id="31" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="32" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="33" type="checkbox" onclick="updateCell()" class="form-control" disabled/>
+                                </td>
+                                <td>
+                                    <input id="34" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="35" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>4</th>
+                                <td>
+                                    <input id="41" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="42" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="43" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="44" type="checkbox" onclick="updateCell()" class="form-control" disabled/>
+                                </td>
+                                <td>
+                                    <input id="45" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>5</th>
+                                <td>
+                                    <input id="51" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="52" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="53" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="54" type="checkbox" onclick="updateCell()" class="form-control"/>
+                                </td>
+                                <td>
+                                    <input id="55" type="checkbox" onclick="updateCell()" class="form-control" disabled/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="panel-footer">
+                        <div class="box-line">
+                            <button class="btn btn-primary" onclick="drawGraph()" style="background-color: green;">Tracer mon graphe</button>
+                            <button class="btn btn-primary" onclick="drawGraph222()" style="background-color: green;">Déterminer les points d'articulation</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="container">
+                <div id="graph-container" class="panel panel-default">
+                    
+                </div>
+            </div>
+        </row>
+        <script>
+            
+        </script>
+    </body>
+</html>
+
